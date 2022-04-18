@@ -1,7 +1,7 @@
 <launch>
     <node pkg="practice" type="AGV_teleop_key.py" name="AGV_teleop_key" output="screen" />
   
-    <node pkg="rosserial_python" type="serial_node.py" name="turtlebot3_core" output="screen">
+    <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
       <param name="port" value="/dev/ttyUSB0"/>
       <param name="baud" value="57600"/>
     </node>
