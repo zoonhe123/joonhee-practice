@@ -72,10 +72,12 @@ ros::Publisher speed_pub("speed", &speed_msg);
 
 void setup()
 {
-  Serial3.begin(57600);
-  
+//  Wire.begin();
+  Serial3.begin(115200);
+  Serial3.println("co1=1");
+  Serial3.println("co2=1");
   nh.initNode();
-  nh.getHardware()->setBaud(57600);
+  nh.getHardware()->setBaud(115200);
   nh.subscribe(cmd_vel);
   nh.advertise(speed_pub);
 }
@@ -100,7 +102,7 @@ void publishSpeed(double time) {
   speed_msg.vector.z = time / 1000;       //looptime, should be the same as specified in LOOPTIME (in s)
   speed_pub.publish(&speed_msg);
   nh.spinOnce();
-  nh.loginfo("Publishing odometry");
+//  nh.loginfo("Publishing odometry");
 }
 void extract_velocity_Right() {
     String recv_str3 = "";

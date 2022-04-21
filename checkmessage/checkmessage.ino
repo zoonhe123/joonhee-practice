@@ -15,7 +15,7 @@ double speed_cmd_left = 0;  //왼쪽 바퀴 속도[m/s]
 double speed_cmd_right = 0; //오른쪽 바퀴 속도[m/s]
 
 void publishSpeed(double time);
-volatile double velocity_Right,velocity_Left; 
+volatile double velocity_Right,velocity_Left;
 
 ros::NodeHandle  nh;
 
@@ -30,6 +30,26 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   // 각속도 < 0 : 우회전, 왼쪽 모터 속도+, 오른쪽 모터 속도-
   speed_cmd_left = linear_speed_cmd - angular_speed_cmd * (wheelbase / 2);
   speed_cmd_right = linear_speed_cmd + angular_speed_cmd * (wheelbase / 2);
+
+   // 모터제어기 명령을 위해 m/s --> rpm 단위환산
+  String rpm_cmd = "mvc=";
+  String rpm_R = "";
+  String rpm_L = ",";
+  
+  //right
+  speed_cmd_right *= 60/(2*3.14)/radius;
+  rpm_R += String(speed_cmd_right);
+  
+  //left
+  speed_cmd_left *= 60/(2*3.14)/radius;
+  rpm_L += String(speed_cmd_left);
+  
+  // mvc = __,__ 형식의 command 를 만들어 Serial3.println
+  rpm_cmd += rpm_R + rpm_L;
+  Serial3.println(rpm_cmd);
+  
+  //loop delay for callback time
+  //delay(100);
 }
 ros::Subscriber<geometry_msgs::Twist> check_vel("cmd_vel", AGVcontrol_cmd);
 geometry_msgs::Vector3Stamped speed_msg;//create a "speed_msg" ROS message
@@ -37,9 +57,11 @@ ros::Publisher speed_pub("speed", &speed_msg);
 
 void setup()
 {
-
+  Serial3.begin(115200);
+  Serial3.println("co1=1");
+  Serial3.println("co2=1");
   nh.initNode();
-//  nh.getHardware()->setBaud(57600);
+  nh.getHardware()->setBaud(115200);
   nh.subscribe(check_vel);
   nh.advertise(speed_pub);
 }
@@ -47,7 +69,7 @@ void setup()
 void loop()
 {
   nh.spinOnce();
-  publishSpeed(LOOPTIME);
+//  publishSpeed(LOOPTIME);
   delay(10);
 
 }
