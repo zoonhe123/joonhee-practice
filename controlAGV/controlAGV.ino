@@ -1,5 +1,6 @@
 // subscribe cmd_vel from AGV_teleop_key.py by rosserial
 // 받은 속도값으로 모터 제어
+// 180도 회전 명령 key 추가 예정
 #include <ros.h>
 #include <Wire.h>
 #include <geometry_msgs/Twist.h>
