@@ -23,6 +23,8 @@ double speed_cmd_right = 0; //오른쪽 바퀴 속도[m/s]
 void extract_velocity_Right();
 void extract_velocity_Left();
 //void publishSpeed(double time);
+void publlish_encoder();
+
 
 volatile double v1,v2;  //v1 = Right velocity, v2 = Left velocity
 volatile double velocity_Right,velocity_Left; 
@@ -59,28 +61,8 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   rpm_cmd += rpm_R + rpm_L;
   Serial3.println(rpm_cmd); // 속도명령을 내리고 엔코더값을 읽어옴.
 
-  //--------------추가한 코드-------------------------------------
-  String rec_encoder = "";
-  delay(5); ////데이터 송신후 수신 delay
-  do {
-      rec_encoder += (char)Serial3.read();
-    } while (Serial3.available());
-  // 읽어온 엔코더값은 mvc = _____, _____ 의 형태이므로 숫자값으로 바꿔줘야함
-  int find_equal = rec_encoder.indexOf('=', 0); //from 0
-  int find_dot = rec_encoder.indexOf(',', 0);
-  int find_positive = rec_encoder.indexOf('-', 0);
-  //엔코더 값 추출
-    for (int i = find_equal + 1; i < rec_encoder.length(); i++) {str_v1 += recv_str3[i];} // ___,___ 만 추출
-    if (find_positive < 0) positive = true;
-    else if (find_positive > 0) positive = false;
-    v1 = positive ? v1_1 + v1_2 : v1_1 - v1_2;
-    velocity_Right = v1*radius*2*3.141592/60;
+  publlish_encoder();// 추가 함수
 
-
-
-
-  
-  //--------------------------------------------------------------
   //loop delay for callback time
   delay(100);
 }
@@ -88,8 +70,8 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
 //subscriber
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", AGVcontrol_cmd);
 
-geometry_msgs::Vector3Stamped speed_msg;//create a "speed_msg" ROS message
-ros::Publisher speed_pub("speed", &speed_msg);
+//geometry_msgs::Vector3Stamped speed_msg;//create a "speed_msg" ROS message
+//ros::Publisher speed_pub("speed", &speed_msg);
 
 //---------------추가된 퍼블리셔--------------------------------------
 std_msgs::Int32 l_wheel;
@@ -105,7 +87,9 @@ void setup()
   nh.initNode();
   nh.getHardware()->setBaud(57600); // 이거 왜하는지 모르겠음
   nh.subscribe(cmd_vel);
-  nh.advertise(speed_pub);
+//  nh.advertise(speed_pub);
+  nh.advertise(l_enc_pub);
+  nh.advertise(r_enc_pub);
 }
 
 void loop()
@@ -119,7 +103,7 @@ void loop()
   }
   extract_velocity_Right();
   extract_velocity_Left();
-  publishSpeed(LOOPTIME);
+//  publishSpeed(LOOPTIME);
 }
 
 //void publishSpeed(double time) {
@@ -131,6 +115,32 @@ void loop()
 //  nh.spinOnce();
 ////  nh.loginfo("Publishing odometry");
 //}
+
+//--------------추가한 코드-------------------------------------
+void publlish_encoder(){
+
+  String rec_encoder = "";
+  String str_l_wheel, str_r_wheel;
+  delay(5); ////데이터 수신 delay
+  do {
+      rec_encoder += (char)Serial3.read();
+    } while (Serial3.available());
+  // 읽어온 엔코더값은 mvc = _____, _____ 의 형태이므로 숫자값으로 바꿔줘야함
+  int find_equal = rec_encoder.indexOf('=', 0); //from 0
+  int find_dot = rec_encoder.indexOf(',', 0);
+  int find_positive = rec_encoder.indexOf('-', 0);
+  // 엔코더 값 추출
+  for (int i = find_equal + 1; i < find_dot; i++) {str_l_wheel += rec_encoder[i];}
+  for (int i = find_dot + 1; i < rec_encoder.length(); i++) {str_r_wheel += rec_encoder[i];}
+  // 엔코더 값을 정수로 메시지에 추가
+  l_wheel.data = str_l_wheel.toInt();
+  r_wheel.data = str_r_wheel.toInt();
+  // 엔코더 값 퍼블리시
+  l_enc_pub.publish(&l_wheel);
+  r_enc_pub.publish(&r_wheel);
+}
+//--------------------------------------------------------------
+
 void extract_velocity_Right() {
     String recv_str3 = "";
     String str_v1, str_v2;
