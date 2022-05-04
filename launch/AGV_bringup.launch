@@ -1,0 +1,27 @@
+<launch>
+    <!-- get motor velocity -->
+    <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
+      <param name="port" value="/dev/ttyUSB0"/>
+      <param name="baud" value="57600"/>
+    </node>
+
+
+    <!-- realsense IMU  -->
+    
+
+    <!-- Publish odometry, odom to base_footprint tf, base_link jointstate  -->
+    <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
+
+    
+    <!-- robot_localization : Odom-IMU Extended Kalman Filter-->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
+        <remap from="odometry/filtered" to="odom" />
+        <rosparam command="load" file="$(find linorobot)/param/ekf/robot_localization.yaml" />
+    </node>
+
+    <!-- Run rplidar -->
+    <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+
+</launch>
+
+    

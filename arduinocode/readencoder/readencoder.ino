@@ -82,10 +82,11 @@ ros::Publisher r_enc_pub("right_encoder", &r_wheel);
 
 void setup()
 {
-  Serial3.begin(57600);
-  
+  Serial3.begin(115200);
+  Serial3.println("co1=1");
+  Serial3.println("co2=1");
   nh.initNode();
-  nh.getHardware()->setBaud(57600); // 이거 왜하는지 모르겠음
+  nh.getHardware()->setBaud(115200);
   nh.subscribe(cmd_vel);
 //  nh.advertise(speed_pub);
   nh.advertise(l_enc_pub);
