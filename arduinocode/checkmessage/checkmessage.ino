@@ -1,85 +1,45 @@
-// AGV_teleop_key 에서 publish하는 메시지가 잘 받아지는지 확인하는 node
+// 엔코더 메시지처럼 위장한 메시지를 쏘아주는 코드
 #include <ros.h>
 #include <Wire.h>
-#include <geometry_msgs/Twist.h>
-#include <geometry_msgs/Vector3Stamped.h>
+#include <geometry_msgs/PointStamped.h>
 #include <ros/time.h>
-
-#define LOOPTIME  100 
-
-const double radius = 0.032;  //바퀴 반지름[m] 우리껀0.064
-const double wheelbase = 0.17;  //축간 거리[m] 우리건 0.17
-double linear_speed_cmd = 0; //AGV 선형 속도[m/s]
-double angular_speed_cmd = 0; //AGV 각속도[rad/s]
-double speed_cmd_left = 0;  //왼쪽 바퀴 속도[m/s]
-double speed_cmd_right = 0; //오른쪽 바퀴 속도[m/s]
-
-void publishSpeed(double time);
-volatile double velocity_Right,velocity_Left;
+ 
 
 ros::NodeHandle  nh;
 
-void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
+geometry_msgs::PointStamped wheel;
+ros::Publisher enc_pub("encoder_data", &wheel);
 
-  // cmd_vel에서 속도 추출
-  linear_speed_cmd = cmd_vel.linear.x;
-  angular_speed_cmd = cmd_vel.angular.z;
+//unsigned int l_encoder = 0;
+//unsigned int r_encoder = 0;
 
-  // 각 모터에 속도 명령을 주기 위해 변환
-  // 각속도 > 0 : 좌회전, 왼쪽 모터 속도-, 오른쪽 모터 속도+
-  // 각속도 < 0 : 우회전, 왼쪽 모터 속도+, 오른쪽 모터 속도-
-  speed_cmd_left = linear_speed_cmd - angular_speed_cmd * (wheelbase / 2);
-  speed_cmd_right = linear_speed_cmd + angular_speed_cmd * (wheelbase / 2);
+void publish_encoder();
 
-   // 모터제어기 명령을 위해 m/s --> rpm 단위환산
-  String rpm_cmd = "mvc=";
-  String rpm_R = "";
-  String rpm_L = ",";
-  
-  //right
-  speed_cmd_right *= 60/(2*3.14)/radius;
-  rpm_R += String(speed_cmd_right);
-  
-  //left
-  speed_cmd_left *= 60/(2*3.14)/radius;
-  rpm_L += String(speed_cmd_left);
-  
-  // mvc = __,__ 형식의 command 를 만들어 Serial3.println
-  rpm_cmd += rpm_R + rpm_L;
-  Serial3.println(rpm_cmd);
-  
-  //loop delay for callback time
-  //delay(100);
-}
-ros::Subscriber<geometry_msgs::Twist> check_vel("cmd_vel", AGVcontrol_cmd);
-geometry_msgs::Vector3Stamped speed_msg;//create a "speed_msg" ROS message
-ros::Publisher speed_pub("speed", &speed_msg);
-
+unsigned int l_encoder = 0;
+unsigned int r_encoder = 0;
 void setup()
 {
-  Serial3.begin(115200);
-  Serial3.println("co1=1");
-  Serial3.println("co2=1");
   nh.initNode();
-  nh.getHardware()->setBaud(115200);
-  nh.subscribe(check_vel);
-  nh.advertise(speed_pub);
+
+  nh.advertise(enc_pub);
 }
 
 void loop()
 {
+  publish_encoder();
   nh.spinOnce();
-//  publishSpeed(LOOPTIME);
-  delay(10);
-
+  delay(100);
 }
-void publishSpeed(double time) {
-  velocity_Left = speed_cmd_left;
-  velocity_Right = speed_cmd_right;
-  speed_msg.header.stamp = nh.now();      //timestamp for odometry data
-  speed_msg.vector.x = velocity_Left;  //left wheel speed (in m/s)
-  speed_msg.vector.y = velocity_Right;   //right wheel speed (in m/s)
-  speed_msg.vector.z = time / 1000;       //looptime, should be the same as specified in LOOPTIME (in s)
-  speed_pub.publish(&speed_msg);
-  nh.spinOnce();
+void publish_encoder(){
+  l_encoder+=2;
+  r_encoder+=3;
+
+  wheel.point.x = l_encoder*1.0;
+  wheel.point.y = r_encoder*1.0;
+  wheel.point.z = 0.0;
+  wheel.header.stamp = nh.now();
+
+  enc_pub.publish(&wheel);
+
+  
 }

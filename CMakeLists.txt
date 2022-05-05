@@ -4,7 +4,8 @@ project(practice)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp 
-  rospy 
+  rospy
+  tf
   tf2
   tf2_ros
   nav_msgs 
@@ -18,7 +19,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES practice
-  CATKIN_DEPENDS roscpp rospy tf2 tf2_ros nav_msgs geometry_msgs sensor_msgs std_msgs
+  CATKIN_DEPENDS roscpp rospy tf tf2 tf2_ros nav_msgs geometry_msgs sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 
@@ -34,6 +35,16 @@ catkin_install_python(PROGRAMS
 
 catkin_install_python(PROGRAMS
   nodes/AGV_teleop_key.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+catkin_install_python(PROGRAMS
+  nodes/publish_helper.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+catkin_install_python(PROGRAMS
+  nodes/publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
