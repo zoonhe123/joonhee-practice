@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(practice)
 
+
 find_package(catkin REQUIRED COMPONENTS
-  rospy
+  roscpp 
+  rospy 
+  tf2
+  tf2_ros
+  nav_msgs 
+  geometry_msgs 
+  sensor_msgs 
   std_msgs
-  geometry_msgs
 )
 
 catkin_python_setup()
@@ -12,7 +18,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES practice
-  CATKIN_DEPENDS rospy std_msgs geometry_msgs
+  CATKIN_DEPENDS roscpp rospy tf2 tf2_ros nav_msgs geometry_msgs sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 

@@ -14,11 +14,15 @@ const byte noCommLoopMax = 10;                //number of main loops the robot w
 unsigned int noCommLoops = 0;                 //main loop without communication counter
 
 const double radius = 0.032;  //바퀴 반지름[m] 우리껀0.064
-//const double wheelbase = 0.17;  //축간 거리[m] 우리건 0.17
+const double width = 0.372;  //두 바퀴 사이 거리[m]
 double linear_speed_cmd = 0; //AGV 선형 속도[m/s]
 double angular_speed_cmd = 0; //AGV 각속도[rad/s]
-double speed_cmd_left = 0;  //왼쪽 바퀴 속도[m/s]
-double speed_cmd_right = 0; //오른쪽 바퀴 속도[m/s]
+//double speed_cmd_left = 0;  //왼쪽 바퀴 속도[m/s]
+//double speed_cmd_right = 0; //오른쪽 바퀴 속도[m/s]
+
+
+
+
 
 void extract_velocity_Right();
 void extract_velocity_Left();
@@ -39,24 +43,25 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   // 각 모터에 속도 명령을 주기 위해 변환
   // 각속도 > 0 : 좌회전, 왼쪽 모터 속도-, 오른쪽 모터 속도+
   // 각속도 < 0 : 우회전, 왼쪽 모터 속도+, 오른쪽 모터 속도-
-  speed_cmd_left = linear_speed_cmd - angular_speed_cmd;// * (wheelbase / 2);
-  speed_cmd_right = linear_speed_cmd + angular_speed_cmd;// * (wheelbase / 2);
+  //speed_cmd_left = linear_speed_cmd - (angular_speed_cmd * width / 2);
+  //speed_cmd_right = linear_speed_cmd + (angular_speed_cmd * width / 2);
 
   // 모터제어기 명령을 위해 m/s --> rpm 단위환산
-  String rpm_cmd = "mvc=";
-  String rpm_R = "";
-  String rpm_L = ",";
+  String rpm_cmd = "mla="; 
+  //String rpm_R = "";
+  //String rpm_L = ",";
   
   //right
-  speed_cmd_right *= 60/(2*3.14)/radius;
-  rpm_R += String(speed_cmd_right);
+  //speed_cmd_right *= 60/(2*3.14)/radius;
+  //rpm_R += String(speed_cmd_right);
   
   //left
-  speed_cmd_left *= 60/(2*3.14)/radius;
-  rpm_L += String(speed_cmd_left);
+  //speed_cmd_left *= 60/(2*3.14)/radius;
+  //rpm_L += String(speed_cmd_left);
   
   // mvc = __,__ 형식의 command 를 만들어 Serial3.println
-  rpm_cmd += rpm_R + rpm_L;
+  //rpm_cmd += rpm_R + rpm_L;
+  rpm_cmd += String(linear_speed_cmd) + String(angular_speed_cmd);
   Serial3.println(rpm_cmd);
   
   //loop delay for callback time
