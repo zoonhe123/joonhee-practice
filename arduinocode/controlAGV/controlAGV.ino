@@ -39,8 +39,8 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   // 각 모터에 속도 명령을 주기 위해 변환
   // 각속도 > 0 : 좌회전, 왼쪽 모터 속도-, 오른쪽 모터 속도+
   // 각속도 < 0 : 우회전, 왼쪽 모터 속도+, 오른쪽 모터 속도-
-  speed_cmd_left = linear_speed_cmd - angular_speed_cmd// * (wheelbase / 2);
-  speed_cmd_right = linear_speed_cmd + angular_speed_cmd// * (wheelbase / 2);
+  speed_cmd_left = linear_speed_cmd - angular_speed_cmd;// * (wheelbase / 2);
+  speed_cmd_right = linear_speed_cmd + angular_speed_cmd;// * (wheelbase / 2);
 
   // 모터제어기 명령을 위해 m/s --> rpm 단위환산
   String rpm_cmd = "mvc=";
@@ -60,7 +60,7 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   Serial3.println(rpm_cmd);
   
   //loop delay for callback time
-  delay(100);
+  
 }
 
 //subscriber(will execute "handle_cmd" function when receiving data)
@@ -87,13 +87,14 @@ void loop()
   
   nh.spinOnce();
 
-    noCommLoops++;
-    if (noCommLoops == 65535) {
-      noCommLoops = noCommLoopMax;
-    }
-    extract_velocity_Right();
-    extract_velocity_Left();
-    publishSpeed(LOOPTIME);
+  noCommLoops++;
+  if (noCommLoops == 65535) {
+    noCommLoops = noCommLoopMax;
+  }
+  extract_velocity_Right();
+  extract_velocity_Left();
+  publishSpeed(LOOPTIME);
+  delay(100);
 }
 void publishSpeed(double time) {
   speed_msg.header.stamp = nh.now();      //timestamp for odometry data

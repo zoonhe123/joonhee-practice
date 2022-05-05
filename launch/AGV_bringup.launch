@@ -7,7 +7,7 @@
 
 
     <!-- realsense IMU  -->
-    
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch" />
 
     <!-- Publish odometry, odom to base_footprint tf, base_link jointstate  -->
     <node pkg="linorobot" name="lino_base_node" type="lino_base_node"></node>
