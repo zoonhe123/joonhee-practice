@@ -1,7 +1,7 @@
 // 받은 속도값으로 모터 제어+엔코더 값을 읽어 퍼블리시하는 node
 #include <ros.h>
 #include <Wire.h>
-#include <std_msgs/Int32.h>
+#include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Twist.h>
 #include <ros/time.h>
 
@@ -40,10 +40,8 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
 // subscriber
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", AGVcontrol_cmd);
 // publisher
-std_msgs::Int32 l_wheel;
-ros::Publisher l_enc_pub("left_encoder", &l_wheel);
-std_msgs::Int32 r_wheel;
-ros::Publisher r_enc_pub("right_encoder", &r_wheel);
+geometry_msgs::PointStamped wheel;
+ros::Publisher enc_pub("encoder_data", &wheel);
 
 
 void setup()
@@ -54,8 +52,8 @@ void setup()
   nh.initNode();
   nh.getHardware()->setBaud(115200);
   nh.subscribe(cmd_vel);
-  nh.advertise(l_enc_pub);
-  nh.advertise(r_enc_pub);
+  nh.advertise(enc_pub);
+
 }
 
 void loop()
@@ -86,9 +84,10 @@ void publlish_encoder(){
   for (int i = find_equal + 1; i < find_dot; i++) {str_l_wheel += rec_encoder[i];}
   for (int i = find_dot + 1; i < rec_encoder.length(); i++) {str_r_wheel += rec_encoder[i];}
   // 엔코더 값을 정수로 메시지에 추가
-  l_wheel.data = str_l_wheel.toInt();
-  r_wheel.data = str_r_wheel.toInt();
-  // 엔코더 값 퍼블리시
-  l_enc_pub.publish(&l_wheel);
-  r_enc_pub.publish(&r_wheel);
+  wheel.point.x = str_l_wheel.toInt()*1.0; // 왼쪽 엔코더 값
+  wheel.point.y = str_r_wheel.toInt()*1.0; // 오른쪽 엔코더 값
+  wheel.point.z = 0.0;
+  wheel.header.stamp = nh.now();
+
+  enc_pub.publish(&wheel);
 }
