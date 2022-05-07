@@ -16,8 +16,6 @@ double angular_speed_cmd = 0; //AGV 각속도[rad/s]
 
 void publlish_encoder();
 
-volatile double v1,v2;  //v1 = Right velocity, v2 = Left velocity
-volatile double velocity_Right,velocity_Left; 
 ros::NodeHandle  nh;
 
 // cmd_vel 콜백 함수
@@ -30,8 +28,9 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
 
   // 모터제어기 명령 command
   String mla_cmd = "mla=";
+  String comma = ",";
 
-  mla_cmd += String(linear_speed_cmd) + String(angular_speed_cmd);
+  mla_cmd += String(linear_speed_cmd) + comma + String(angular_speed_cmd);
   Serial3.println(mla_cmd); // 속도명령을 내리고 엔코더값을 읽어옴.
 
   publlish_encoder();// 엔코더 값을 읽어 퍼블리시하는 추가 함수
