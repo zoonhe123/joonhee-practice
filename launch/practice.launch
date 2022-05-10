@@ -5,8 +5,26 @@
       <param name="baud" value="57600"/>
     </node>
 
+
+    <!-- IMU -->
+
+
+
     <node pkg="practice" type="publisher.py" name="publisher" output="screen">
     </node>
+
+
+    <!-- Odom-IMU Extended Kalman Filter-->
+
+
+
+    <param name="robot_description" textfile="$(find robot_description)/urdf/AGV.urdf" />
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+
+    <!-- Run RPlidar -->
+
 
 </launch>
 
