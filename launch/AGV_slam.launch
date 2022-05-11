@@ -1,20 +1,8 @@
 <launch>
 
-    <!-- bring URDF-->
-    <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
-        <arg name="model" value="$(arg model)" />
-    </include>
-
-    <!-- publish tf-->
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-        <param name="publish_frequency" type="double" value="50.0" />
-        <param name="tf_prefix" value="$(arg multi_robot_name)"/>
-    </node>
-
     <!-- Slam package -->
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
-        <param name="base_frame" value="/base_footprint" />
-        <param name="odom_frame" value="/odom" />
+        
         <param name="map_update_interval" value="15.0"/>
         <param name="maxUrange" value="5.0"/>
         <param name="minRange" value="-0.5"/>
@@ -45,14 +33,14 @@
         <param name="llsamplestep" value="0.05"/>
         <param name="lasamplerange" value="0.005"/>
         <param name="lasamplestep" value="0.005"/>
-        <param name="transform_publish_period" value="0.1"/>
+
     </node>
 
     <!-- rviz -->
-    <group if="$(arg open_rviz)"> 
+
       <node pkg="rviz" type="rviz" name="rviz" required="true"
-          args="-d $(find turtlebot3_slam)/rviz/turtlebot3_$(arg slam_methods).rviz"/>
-    </group>
+          args="-d $(find turtlebot3_slam)/rviz/turtlebot3_gmapping.rviz"/>
+
 
 </launch>
 
