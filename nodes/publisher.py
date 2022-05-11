@@ -19,8 +19,8 @@ def encoder_callback(data) :
     global x_pos
     global y_pos
     global theta
-    new_l_wheel_pulse = data.point.x
-    new_r_wheel_pulse = data.point.y
+    new_l_wheel_pulse = data.point.y
+    new_r_wheel_pulse = data.point.x
     delta_l_pulse = new_l_wheel_pulse - l_wheel_pulse
     delta_r_pulse = new_r_wheel_pulse - r_wheel_pulse
     l_wheel_pulse = new_l_wheel_pulse # 새 엔코더 값을 기존 엔코더 값에 덮어씌움
@@ -32,8 +32,8 @@ def encoder_callback(data) :
     time_prev = time_now
 
 
-    l_vel = (2 * math.pi * 0.032 * (delta_l_pulse / 646)) / delta_time
-    r_vel = (2 * math.pi * 0.032 * (delta_r_pulse / 646)) / delta_time
+    l_vel = (2 * math.pi * 0.032 * (delta_l_pulse / 1292)) / delta_time
+    r_vel = (2 * math.pi * 0.032 * (delta_r_pulse / 1292)) / delta_time
 
     linear_vel = (l_vel + r_vel) / 2.0
     angular_vel = (r_vel - l_vel) / 0.372

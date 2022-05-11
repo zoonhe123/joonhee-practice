@@ -13,6 +13,8 @@ const double radius = 0.032;  //바퀴 반지름[m] 우리껀0.064
 const double width = 0.372;  //두 바퀴 사이 거리[m]
 double linear_speed_cmd = 0; //AGV 선형 속도[m/s]
 double angular_speed_cmd = 0; //AGV 각속도[rad/s]
+double speed_cmd_left = 0;  //왼쪽 바퀴 속도[rpm]
+double speed_cmd_right = 0; //오른쪽 바퀴 속도[rpm]
 
 void publlish_encoder();
 
@@ -25,13 +27,16 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   // cmd_vel에서 속도 추출
   linear_speed_cmd = cmd_vel.linear.x;
   angular_speed_cmd = cmd_vel.angular.z;
+  
+  speed_cmd_left = (linear_speed_cmd - (angular_speed_cmd * width / 2)) * 60/(2*3.14)/radius;
+  speed_cmd_right = (linear_speed_cmd + (angular_speed_cmd * width / 2)) * 60/(2*3.14)/radius;
 
   // 모터제어기 명령 command
-  String mla_cmd = "mla=";
+  String mvc_cmd = "mvc=";
   String comma = ",";
 
-  mla_cmd += String(linear_speed_cmd) + comma + String(angular_speed_cmd);
-  Serial3.println(mla_cmd); // 속도명령을 내리고 엔코더값을 읽어옴.
+  mvc_cmd += String(speed_cmd_right) + comma + String(speed_cmd_left);
+  Serial3.println(mvc_cmd); // 속도명령을 내리고 엔코더값을 읽어옴.
 
   publlish_encoder();// 엔코더 값을 읽어 퍼블리시하는 추가 함수
 }
