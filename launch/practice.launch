@@ -28,8 +28,9 @@
     <!-- Run rplidar -->
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
 
-    <!-- Run rviz -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_description)/rviz/AGV.rviz"/>
+
+
+    
 
 
 </launch>
