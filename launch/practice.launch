@@ -22,11 +22,14 @@
 
     <param name="robot_description" textfile="$(find robot_description)/urdf/AGV.urdf" />
 
+
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
 
     <!-- Run rplidar -->
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+
+    
 
 
 

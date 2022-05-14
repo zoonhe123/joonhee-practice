@@ -4,10 +4,52 @@
 import rospy
 from geometry_msgs.msg import PointStamped # 엔코더 메시지
 import tf # tf broadcaster
-import math
+from math import sin,cos,pi
 from time import time
 from nav_msgs.msg import Odometry # 오도메트리 메시지
 from sensor_msgs.msg import JointState # 바퀴 조인트 상태 메시지
+
+def init_odometry() : 
+
+    Odometry()
+            
+    Odometry().header.stamp = rospy.Time.now()
+    Odometry().header.frame_id = "odom"
+    Odometry().child_frame_id = "base_footprint"
+
+    # robot's position in x,y, and z
+    Odometry().pose.pose.position.x = 0.0
+    Odometry().pose.pose.position.y = 0.0
+    Odometry().pose.pose.position.z = 0.0
+    # robot's heading in quaternion
+    Odometry().pose.pose.orientation.x = 0.0
+    Odometry().pose.pose.orientation.y = 0.0
+    Odometry().pose.pose.orientation.z = 0.0
+    Odometry().pose.pose.orientation.w = 0.0
+
+    Odometry().pose.covariance[0] = 1e-3
+    Odometry().pose.covariance[7] = 1e-3
+    Odometry().pose.covariance[14] = 1e6
+    Odometry().pose.covariance[21] = 1e6
+    Odometry().pose.covariance[28] = 1e6
+    Odometry().pose.covariance[35] = 1e3
+
+    # linear speed from encoders
+    Odometry().twist.twist.linear.x = 0.0
+    Odometry().twist.twist.linear.y = 0.0
+    Odometry().twist.twist.linear.z = 0.0
+    Odometry().twist.twist.angular.x = 0.0
+    Odometry().twist.twist.angular.y = 0.0
+    Odometry().twist.twist.angular.z = 0.0
+
+    Odometry().twist.covariance[0] = 1e-3
+    Odometry().twist.covariance[7] = 1e-3
+    Odometry().twist.covariance[14] = 1e6
+    Odometry().twist.covariance[21] = 1e3
+    Odometry().twist.covariance[28] = 1e6
+    Odometry().twist.covariance[35] = 1e3
+
+    odom_publisher.publish(Odometry())
 
 
 def encoder_callback(data) : 
@@ -19,6 +61,7 @@ def encoder_callback(data) :
     global x_pos
     global y_pos
     global theta
+    global count
     new_l_wheel_pulse = data.point.y
     new_r_wheel_pulse = data.point.x
     delta_l_pulse = new_l_wheel_pulse - l_wheel_pulse
@@ -31,27 +74,37 @@ def encoder_callback(data) :
     delta_time = time_now - time_prev
     time_prev = time_now
 
-
-    l_vel = (2 * math.pi * 0.032 * (delta_l_pulse / 1292)) / delta_time
-    r_vel = (2 * math.pi * 0.032 * (delta_r_pulse / 1292)) / delta_time
+    l_vel = (2 * pi * 0.032 * (delta_l_pulse / 1292)) / delta_time
+    r_vel = (2 * pi * 0.032 * (delta_r_pulse / 1292)) / delta_time
 
     linear_vel = (l_vel + r_vel) / 2.0
     angular_vel = (r_vel - l_vel) / 0.372
-    delta_s = linear_vel * delta_time
-    delta_theta = angular_vel * delta_time # rad
 
-    delta_vx = delta_s * math.cos(delta_theta)
-    delta_vy = delta_s * math.sin(delta_theta)
+    delta_s = linear_vel * delta_time # delta_time 동안의 이동거리
+    delta_theta = angular_vel * delta_time # small angle[rad]
 
-    delta_x = (delta_vx * math.cos(theta) - delta_vy * math.sin(theta)) * delta_time
-    delta_y = (delta_vx * math.sin(theta) + delta_vy * math.cos(theta)) * delta_time
+    delta_lx = delta_s * cos(delta_theta)
+    delta_ly = delta_s * sin(delta_theta) # 로컬 좌표계의 delta_x,y 계산
+
+    delta_x = (delta_lx * cos(theta) - delta_ly * sin(theta))
+    delta_y = (delta_lx * sin(theta) + delta_ly * cos(theta))
+    # global 좌표계의 delta_x,y계산
+
+    # 처음 몇 번의 값을 제외해줘야 초기 오도메트리가 0으로 계산됨
+    count += 1
+    if count < 4 : 
+        delta_x = 0
+        delta_y = 0
+        delta_theta = 0.0
+    else : 
+        count = 10
     
     x_pos += delta_x
     y_pos += delta_y
     theta += delta_theta
 
-    if theta >= math.pi * 2 : theta -= math.pi * 2
-    if theta <= -math.pi * 2 : theta += math.pi * 2
+    if theta >= pi * 2 : theta -= pi * 2
+    if theta <= -pi * 2 : theta += pi * 2
 
     quaternion = tf.transformations.quaternion_from_euler(0, 0, theta)
 
@@ -134,12 +187,16 @@ if __name__=="__main__":
     global x_pos
     global y_pos
     global theta
+    global count
     l_wheel_pulse = 0
     r_wheel_pulse = 0
-    time_prev = 0
-    x_pos = 0
-    y_pos = 0
-    theta = 0
+    time_prev = 0.0
+    x_pos = 0.0
+    y_pos = 0.0
+    theta = 0.0
+    count = 0
+
+    init_odometry()
 
     rate = rospy.Rate(50)
     rospy.loginfo("publishing")

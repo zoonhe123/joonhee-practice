@@ -1,9 +1,7 @@
 <launch>
-
-    <!-- Slam package -->
-    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
         
-        <param name="map_update_interval" value="15.0"/>
+        <param name="map_update_interval" value="2.0"/>
         <param name="maxUrange" value="5.0"/>
         <param name="minRange" value="-0.5"/>
         <param name="sigma" value="0.05"/>
@@ -36,8 +34,8 @@
 
     </node>
 
-    <!-- Run rviz -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_description)/rviz/slam.rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_description)/rviz/slam.rviz" />
+
 
 
 
