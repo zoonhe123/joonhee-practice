@@ -11,4 +11,4 @@
  - slam simulation 순서
   1. roslaunch practice AGV_world.launch
   2. roslaunch practice AGV_slam_simulation.launch
-  3. rosrun pracrice AGV_teleop_key.py
+  3. rosrun practice AGV_teleop_key.py
