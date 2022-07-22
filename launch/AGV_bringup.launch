@@ -8,16 +8,8 @@
     <node pkg="practice" type="AGV_teleop_key.py" name="AGV_teleop_key" output="screen" />
 
 
-    <!-- IMU -->
-
-
-
     <node pkg="practice" type="publisher.py" name="publisher" output="screen">
     </node>
-
-
-    <!-- Odom-IMU Extended Kalman Filter-->
-
 
 
     <param name="robot_description" textfile="$(find robot_description)/urdf/AGV.urdf" />
