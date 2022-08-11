@@ -1,0 +1,13 @@
+<launch>
+
+    
+    <node pkg="practice" type="imu_frame_changer.py" name="imu_frame_changer"/>
+
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="ImuFilter">
+        <param name="use_mag" type="bool" value="false" />
+        <param name="_publish_tf" type="bool" value="false" />
+        <param name="_world_frame" type="string" value="enu" />
+        <remap from="/imu/data_raw" to="/raw_imu"/>
+    </node>
+
+</launch>

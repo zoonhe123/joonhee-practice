@@ -1,33 +1,49 @@
 <launch>
 
+    <!-- Run rosserial -->
     <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
       <param name="port" value="/dev/ttyUSB0"/>
       <param name="baud" value="57600"/>
     </node>
 
+
+    <!-- publish /cmd_vel-->
     <node pkg="practice" type="AGV_teleop_key.py" name="AGV_teleop_key" output="screen" />
 
 
+    <!-- subscribe /encoder_data , publish /odom -->    
     <node pkg="practice" type="publisher.py" name="publisher" output="screen">
     </node>
 
 
+    <!-- change imu coordinate frame -->    
+    <node pkg="practice" type="imu_frame_changer.py" name="imu_frame_changer"/>
+
+
+    <!-- plus quaternion -->
+    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="ImuFilter">
+        <param name="use_mag" type="bool" value="false" />
+        <param name="_publish_tf" type="bool" value="false" />
+        <param name="_world_frame" type="string" value="enu" />
+        <remap from="/imu/data_raw" to="/raw_imu"/>
+    </node>
+
+
+    <!-- publish /tf , URDF -->    
     <param name="robot_description" textfile="$(find robot_description)/urdf/AGV.urdf" />
-
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-
-
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+
+    <!-- EKF node -->    
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+        <rosparam command="load" file="$(find practice)/config/ekf_localization.yaml"/>
+        <remap from="odometry/filtered" to="odom" />
+    </node>
 
 
     <!-- Run rplidar -->
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
-
-    
-
-
-
-    
 
 
 </launch>
