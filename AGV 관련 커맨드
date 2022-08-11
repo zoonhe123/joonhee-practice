@@ -3,8 +3,9 @@
  - usb 포트 권한 인가 : sudo chmod a+rw /dev/tty~~~
 
  - slam 순서
-  1. roslaunch practice AGV_bringup.launch
-  2. roslaunch practice AGV_slam.launch
+  1. roslaunch realsense2_camera rs_camera.launch filters:=pointcloud unite_imu_method:="linear_interpolation" enable_gyro:=true enable_accel:=true
+  2. roslaunch practice AGV_bringup.launch
+  3. roslaunch practice AGV_slam.launch
  - map 저장
   1. rosrun map_server map_saver -f "이름"
 
