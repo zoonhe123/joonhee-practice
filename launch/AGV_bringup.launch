@@ -12,12 +12,11 @@
 
 
     <!-- subscribe /encoder_data , publish /odom -->    
-    <node pkg="practice" type="publisher.py" name="publisher" output="screen">
-    </node>
+    <node pkg="practice" type="publisher.py" name="publisher" output="screen" />
 
 
     <!-- change imu coordinate frame -->    
-    <node pkg="practice" type="imu_frame_changer.py" name="imu_frame_changer"/>
+    <node pkg="practice" type="imu_frame_changer.py" name="imu_frame_changer" output="screen" />
 
 
     <!-- plus quaternion -->
