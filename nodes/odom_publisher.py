@@ -150,14 +150,7 @@ def encoder_callback(data) :
 
     odom_publisher.publish(odom)
     #------------------------------------------------------------
-    #---------------tf 퍼블리시------------------------------------
-    br = tf.TransformBroadcaster()
-    br.sendTransform((x_pos,y_pos,0),
-                     (quaternion[0],quaternion[1],quaternion[2],quaternion[3]),
-                     rospy.Time.now(),
-                     "base_footprint",
-                     "odom")
-    #------------------------------------------------------------
+
     #---------------joint state 퍼블리시---------------------------
     joint_state = JointState()
     joint_state.header.frame_id = "base_link"
@@ -176,7 +169,7 @@ def encoder_callback(data) :
 
 if __name__=="__main__":
     
-    rospy.init_node('publisher')   
+    rospy.init_node('odom_publisher')   
     rospy.Subscriber("encoder_data", PointStamped, encoder_callback)
     odom_publisher = rospy.Publisher('/odom', Odometry, queue_size=50)
     joint_state_publisher = rospy.Publisher('/joint_states', JointState, queue_size=50)
@@ -199,7 +192,7 @@ if __name__=="__main__":
     init_odometry()
 
     rate = rospy.Rate(50)
-    rospy.loginfo("publishing")
+    rospy.loginfo("publishing odometry")
     rospy.spin()
     rate.sleep()
 

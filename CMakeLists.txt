@@ -39,7 +39,17 @@ catkin_install_python(PROGRAMS
 )
 
 catkin_install_python(PROGRAMS
-  nodes/publisher.py
+  nodes/encoder_publisher.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+catkin_install_python(PROGRAMS
+  nodes/odom_publisher.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+catkin_install_python(PROGRAMS
+  nodes/tf_publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
