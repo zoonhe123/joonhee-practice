@@ -50,11 +50,11 @@ ros::Publisher enc_pub("encoder_data", &wheel);
 
 void setup()
 {
-  Serial3.begin(115200);
+  Serial3.begin(38400);
   Serial3.println("co1=1");
   Serial3.println("co2=1");
   nh.initNode();
-  nh.getHardware()->setBaud(115200);
+  nh.getHardware()->setBaud(57600);
   nh.subscribe(cmd_vel);
   nh.advertise(enc_pub);
 
@@ -69,7 +69,7 @@ void loop()
 //  {
 //    noCommLoops = noCommLoopMax;
 //  }
-  delay(100);
+  delay(200);
 }
 
 void publlish_encoder(){
@@ -79,6 +79,7 @@ void publlish_encoder(){
   delay(5); ////데이터 수신 delay
   do {
       rec_encoder += (char)Serial3.read();
+
     } while (Serial3.available());
   // 읽어온 엔코더값은 mvc = _____, _____ 의 형태이므로 숫자값으로 바꿔줘야함
   int find_equal = rec_encoder.indexOf('=', 0); //from 0

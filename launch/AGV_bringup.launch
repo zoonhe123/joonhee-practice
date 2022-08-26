@@ -6,6 +6,8 @@
       <param name="baud" value="57600"/>
     </node>
 
+    <!-- Run rplidar -->
+    <include file="$(find rplidar_ros)/launch/rplidar.launch" />
 
     <!-- publish /cmd_vel-->
     <node pkg="practice" type="AGV_teleop_key.py" name="AGV_teleop_key" output="screen" />
@@ -45,8 +47,7 @@
     <node pkg="practice" type="tf_publisher.py" name="tf_publisher" output="screen" />
 
 
-    <!-- Run rplidar -->
-    <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+
 
 
 </launch>
