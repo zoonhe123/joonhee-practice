@@ -18,8 +18,8 @@ if __name__=="__main__":
        while not rospy.is_shutdown():
          
            pst.header.stamp = rospy.Time.now()
-           pst.point.x += 1
-           pst.point.y += 1
+           pst.point.x += 3
+           pst.point.y += 2
            
            encoder.publish(pst)
            rate = rospy.Rate(50)

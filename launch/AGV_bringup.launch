@@ -38,7 +38,7 @@
 
     <!-- EKF node -->    
     <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
-        <rosparam command="load" file="$(find practice)/config/ekf_localization.yaml"/>
+        <rosparam command="load" file="$(find practice)/config/ekf_localization_simul.yaml"/>
         <!-- <remap from="odom" to="odometry/filtered" /> -->
     </node>
 
