@@ -7,6 +7,11 @@ from sensor_msgs.msg import Imu # 바퀴 조인트 상태 메시지
 
 
 def imu_callback(data) : 
+
+    global orientation_x_b
+    global orientation_y_b
+    global orientation_z_b
+    global orientation_w_b
     
     imu = Imu()
 
@@ -27,7 +32,7 @@ def imu_callback(data) :
 
 
 
-    if pow(imu.orientation.x,2) + pow(imu.orientation.y,2) + pow(imu.orientation.z,2) + pow(imu.orientation.w,2) > 1.2 : 
+    if (pow(data.orientation.x,2) + pow(data.orientation.y,2) + pow(data.orientation.z,2) + pow(data.orientation.w,2)) > 1.2 : 
          imu.orientation.x = orientation_x_b
          imu.orientation.y = orientation_y_b
          imu.orientation.z = orientation_z_b
@@ -57,6 +62,7 @@ if __name__=="__main__":
     global orientation_y_b
     global orientation_z_b
     global orientation_w_b
+
     orientation_x_b = 0
     orientation_y_b = 0
     orientation_z_b = 0

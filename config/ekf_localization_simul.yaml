@@ -22,7 +22,7 @@ odom0_config: [true, true, false,
 odom0_differential: false
  
 # Complete the imu0 configuration
-imu0: /imu
+imu0: /imu_data
 imu0_config: [false, false, false,
               false, false, false,
               false, false, false,
