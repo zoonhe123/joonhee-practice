@@ -54,7 +54,7 @@ catkin_install_python(PROGRAMS
 )
 
 catkin_install_python(PROGRAMS
-  nodes/imu_frame_changer.py
+  nodes/imu_filter.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

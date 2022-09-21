@@ -17,17 +17,8 @@
     <node pkg="practice" type="odom_publisher.py" name="odom_publisher" output="screen" />
 
 
-    <!-- change imu coordinate frame -->    
-    <node pkg="practice" type="imu_frame_changer.py" name="imu_frame_changer" output="screen" />
-
-
-    <!-- plus quaternion -->
-    <node pkg="imu_filter_madgwick" type="imu_filter_node" name="ImuFilter">
-        <param name="use_mag" type="bool" value="false" />
-        <param name="publish_tf" type="bool" value="false" />
-        <param name="world_frame" type="string" value="enu" />
-        <remap from="/imu/data_raw" to="/raw_imu"/>
-    </node>
+    <!-- publish imu  -->    
+    <include file="$(find practice)/launch/imu.launch" />
 
 
     <!-- publish /tf , URDF -->    
