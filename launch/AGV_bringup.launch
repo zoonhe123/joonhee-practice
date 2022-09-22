@@ -1,12 +1,12 @@
 <launch>
 
-    <!-- Run rosserial -->
+    <!-- Run rosserial baud 57600, arduino baud 38400-->
     <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
       <param name="port" value="/dev/ttyUSB0"/>
       <param name="baud" value="57600"/>
     </node>
 
-    <!-- Run rplidar -->
+    <!-- Run rplidar baud 115200-->
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
 
     <!-- publish /cmd_vel-->
@@ -17,7 +17,7 @@
     <node pkg="practice" type="odom_publisher.py" name="odom_publisher" output="screen" />
 
 
-    <!-- publish imu  -->    
+    <!-- publish imu baud 19200-->    
     <include file="$(find practice)/launch/imu.launch" />
 
 
