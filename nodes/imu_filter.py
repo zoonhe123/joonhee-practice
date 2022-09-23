@@ -12,6 +12,13 @@ def imu_callback(data) :
     global orientation_y_b
     global orientation_z_b
     global orientation_w_b
+    global gyro_x_b
+    global gyro_y_b
+    global gyro_z_b
+    global accel_x_b
+    global accel_y_b
+    global accel_z_b
+
     
     imu = Imu()
 
@@ -25,12 +32,7 @@ def imu_callback(data) :
     imu.angular_velocity.z = data.angular_velocity.z
     imu.angular_velocity_covariance = data.angular_velocity_covariance
 
-    imu.linear_acceleration.x = data.linear_acceleration.x
-    imu.linear_acceleration.y = data.linear_acceleration.y
-    imu.linear_acceleration.z = data.linear_acceleration.z
     imu.linear_acceleration_covariance = data.linear_acceleration_covariance
-
-
 
     if (pow(data.orientation.x,2) + pow(data.orientation.y,2) + pow(data.orientation.z,2) + pow(data.orientation.w,2)) > 1.2 : 
          imu.orientation.x = orientation_x_b
@@ -43,10 +45,36 @@ def imu_callback(data) :
          imu.orientation.z = data.orientation.z
          imu.orientation.w = data.orientation.w
 
-         orientation_x_b = data.orientation.x
-         orientation_y_b = data.orientation.y
-         orientation_z_b = data.orientation.z
-         orientation_w_b = data.orientation.w
+         orientation_x_b = imu.orientation.x
+         orientation_y_b = imu.orientation.y
+         orientation_z_b = imu.orientation.z
+         orientation_w_b = imu.orientation.w
+
+    if abs(data.angular_velocity.x) > 2.84 or abs(data.angular_velocity.y) > 2.84 or abs(data.angular_velocity.z) > 2.84 : 
+         imu.angular_velocity.x = gyro_x_b
+         imu.angular_velocity.y = gyro_y_b
+         imu.angular_velocity.z = gyro_z_b
+    else : 
+         imu.angular_velocity.x = data.angular_velocity.x
+         imu.angular_velocity.y = data.angular_velocity.y
+         imu.angular_velocity.z = data.angular_velocity.z
+
+         gyro_x_b = imu.angular_velocity.x
+         gyro_y_b = imu.angular_velocity.y
+         gyro_z_b = imu.angular_velocity.z
+
+    if abs(data.linear_acceleration.x) > 0.6 or abs(data.linear_acceleration.y) > 0.6 : 
+         imu.linear_acceleration.x = accel_x_b
+         imu.linear_acceleration.y = accel_y_b
+         imu.linear_acceleration.z = accel_z_b
+    else : 
+         imu.linear_acceleration.x = data.linear_acceleration.x
+         imu.linear_acceleration.y = data.linear_acceleration.y
+         imu.linear_acceleration.z = data.linear_acceleration.z
+
+         accel_x_b = imu.linear_acceleration.x
+         accel_y_b = imu.linear_acceleration.y
+         accel_z_b = imu.linear_acceleration.z
 
     imu_publisher.publish(imu)
 
@@ -62,11 +90,25 @@ if __name__=="__main__":
     global orientation_y_b
     global orientation_z_b
     global orientation_w_b
+    global gyro_x_b
+    global gyro_y_b
+    global gyro_z_b
+    global accel_x_b
+    global accel_y_b
+    global accel_z_b
+
 
     orientation_x_b = 0
     orientation_y_b = 0
     orientation_z_b = 0
     orientation_w_b = 0
+    gyro_x_b = 0
+    gyro_x_b = 0
+    gyro_x_b = 0
+    accel_x_b = 0
+    accel_y_b = 0
+    accel_z_b = 9.81
+
 
     rate = rospy.Rate(50)
     rospy.loginfo("publishing new imu data")

@@ -126,12 +126,18 @@ def encoder_callback(data) :
     odom.pose.pose.orientation.z = quaternion[2]
     odom.pose.pose.orientation.w = quaternion[3]
 
-    odom.pose.covariance[0] = 1e-3
-    odom.pose.covariance[7] = 1e-3
-    odom.pose.covariance[14] = 1e6
-    odom.pose.covariance[21] = 1e6
-    odom.pose.covariance[28] = 1e6
-    odom.pose.covariance[35] = 1e3
+#    odom.pose.covariance[0] = 1e-3
+#    odom.pose.covariance[7] = 1e-3
+#    odom.pose.covariance[14] = 1e6
+#    odom.pose.covariance[21] = 1e6
+#    odom.pose.covariance[28] = 1e6
+#    odom.pose.covariance[35] = 1e3
+    odom.pose.covariance[0] = 0
+    odom.pose.covariance[7] = 0
+    odom.pose.covariance[14] = 0
+    odom.pose.covariance[21] = 0
+    odom.pose.covariance[28] = 0
+    odom.pose.covariance[35] = 0
 
     # linear speed from encoders
     odom.twist.twist.linear.x = linear_vel
@@ -141,12 +147,18 @@ def encoder_callback(data) :
     odom.twist.twist.angular.y = 0.0
     odom.twist.twist.angular.z = angular_vel
 
-    odom.twist.covariance[0] = 1e-3
-    odom.twist.covariance[7] = 1e-3
-    odom.twist.covariance[14] = 1e6
-    odom.twist.covariance[21] = 1e3
-    odom.twist.covariance[28] = 1e6
-    odom.twist.covariance[35] = 1e3
+#    odom.twist.covariance[0] = 1e-3
+#    odom.twist.covariance[7] = 1e-3
+#    odom.twist.covariance[14] = 1e6
+#    odom.twist.covariance[21] = 1e3
+#    odom.twist.covariance[28] = 1e6
+#    odom.twist.covariance[35] = 1e3
+    odom.twist.covariance[0] = 0
+    odom.twist.covariance[7] = 0
+    odom.twist.covariance[14] = 0
+    odom.twist.covariance[21] = 0
+    odom.twist.covariance[28] = 0
+    odom.twist.covariance[35] = 0
 
     odom_publisher.publish(odom)
     #------------------------------------------------------------
