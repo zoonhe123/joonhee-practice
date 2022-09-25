@@ -9,12 +9,12 @@ import sys, select
 import tty, termios
 
 # 최고 속도 설정
-MAX_LIN_VEL = 0.22
-MAX_ANG_VEL = 2.84
+MAX_LIN_VEL = 0.5
+MAX_ANG_VEL = 3.0
 
 # 입력에 따라 증가/감소되는 선형/각속도 양
-LIN_VEL_STEP_SIZE = 0.01
-ANG_VEL_STEP_SIZE = 0.1
+LIN_VEL_STEP_SIZE = 0.05
+ANG_VEL_STEP_SIZE = 0.3
 
 msg = """
 Control Your AGV

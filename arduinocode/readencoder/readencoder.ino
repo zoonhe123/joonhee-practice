@@ -3,23 +3,68 @@
 #include <Wire.h>
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Twist.h>
+//#include <sensor_msgs/Imu.h>
 #include <ros/time.h>
 
-#define LOOPTIME  100                         //Looptime in millisecond
+
+//#define SBUF_SIZE 64 // imu
+
+//char sbuf[SBUF_SIZE]; // imu
+//signed int sbuf_cnt=0; // imu
+
 const byte noCommLoopMax = 10;                //number of main loops the robot will execute without communication before stopping
 unsigned int noCommLoops = 0;                 //main loop without communication counter
 
-const double radius = 0.032;  //바퀴 반지름[m] 우리껀0.064
-const double width = 0.372;  //두 바퀴 사이 거리[m]
+const double radius = 0.085;  //바퀴 반지름[m] 우리껀0.064
+const double width = 0.38;  //두 바퀴 사이 거리[m]
 double linear_speed_cmd = 0; //AGV 선형 속도[m/s]
 double angular_speed_cmd = 0; //AGV 각속도[rad/s]
 double speed_cmd_left = 0;  //왼쪽 바퀴 속도[rpm]
 double speed_cmd_right = 0; //오른쪽 바퀴 속도[rpm]
 
 void publlish_encoder();
+//void publish_imu();
 
 ros::NodeHandle  nh;
+/*
+//---------------------imu function-------------------------------
+int EBimuAsciiParser(float *item, int number_of_item)
+{
+  int n,i;
+  int rbytes;
+  char *addr; 
+  int result = 0;
+  
+  rbytes = Serial2.available();
+  for(n=0;n<rbytes;n++)
+  {
+    sbuf[sbuf_cnt] = Serial2.read();
+    if(sbuf[sbuf_cnt]==0x0a)
+       {
+           addr = strtok(sbuf,",");
+           for(i=0;i<number_of_item;i++)
+           {
+              item[i] = atof(addr);
+              addr = strtok(NULL,",");
+           }
 
+           result = 1;
+
+         // Serial.print("\n\r");
+         // for(i=0;i<number_of_item;i++)  {  Serial.print(item[i]);  Serial.print(" "); }
+       }
+     else if(sbuf[sbuf_cnt]=='*')
+       {   sbuf_cnt=-1;
+       }
+
+     sbuf_cnt++;
+     if(sbuf_cnt>=SBUF_SIZE) sbuf_cnt=0;
+  }
+  
+  return result;
+}
+//---------------------imu function-------------------------------
+*/
 // cmd_vel 콜백 함수
 void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   noCommLoops = 0;   //Reset the counter for number of main loops without communication
@@ -39,17 +84,20 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   Serial3.println(mvc_cmd); // 속도명령을 내리고 엔코더값을 읽어옴.
 
   publlish_encoder();// 엔코더 값을 읽어 퍼블리시하는 추가 함수
+//  publish_imu();
 }
 
 // subscriber
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", AGVcontrol_cmd);
 // publisher
 geometry_msgs::PointStamped wheel;
+//sensor_msgs::Imu imu;
 ros::Publisher enc_pub("encoder_data", &wheel);
-
+//ros::Publisher imu_data("imu",&imu);
 
 void setup()
 {
+//Serial2.begin(19200);
   Serial3.begin(38400);
   Serial3.println("co1=1");
   Serial3.println("co2=1");
@@ -57,6 +105,7 @@ void setup()
   nh.getHardware()->setBaud(57600);
   nh.subscribe(cmd_vel);
   nh.advertise(enc_pub);
+//  nh.advertise(imu_data);
 
 }
 
@@ -69,7 +118,7 @@ void loop()
 //  {
 //    noCommLoops = noCommLoopMax;
 //  }
-  delay(200);
+  delay(15);
 }
 
 void publlish_encoder(){
@@ -96,3 +145,27 @@ void publlish_encoder(){
 
   enc_pub.publish(&wheel);
 }
+/*
+void publish_imu(){
+  
+  float euler[9];
+  
+  if(EBimuAsciiParser(euler, 9)){
+
+    imu.orientation.x = euler[0];
+    imu.orientation.y = -euler[1];
+    imu.orientation.z = -euler[2];
+    imu.orientation.w = 0;
+
+    imu.angular_velocity.x = euler[3];
+    imu.angular_velocity.y = euler[4];
+    imu.angular_velocity.z = euler[5];
+
+    imu.linear_acceleration.x = euler[6];
+    imu.linear_acceleration.y = euler[7];
+    imu.linear_acceleration.z = euler[8];
+    imu_data.publish(&imu);
+  }
+  
+}
+*/
