@@ -2,9 +2,9 @@
 
     <node pkg="e2box_imu" type="e2box_imu_node" name="e2box_imu_node" output="screen">
       <param name="port" type="string" value="/dev/ttyUSB2" />
-      <param name="baudrate" type="int" value="19200" />
+      <param name="baudrate" type="int" value="230400" />
     </node>    
 
-    <node pkg="practice" type="imu_filter.py" name="imu_filter"/>
+    <!--<node pkg="practice" type="imu_filter.py" name="imu_filter"/>-->
 
 </launch>

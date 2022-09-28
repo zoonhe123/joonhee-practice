@@ -57,33 +57,28 @@ def encoder_callback(data) :
     #time_prev = 0
     global l_wheel_pulse
     global r_wheel_pulse
-    global l_wheel_buffer
-    global r_wheel_buffer
     global time_prev
     global x_pos
     global y_pos
     global theta
     global count
-
-    new_l_wheel_pulse = data.point.y # 새 엔코더 값 수신
+    new_l_wheel_pulse = data.point.y
     new_r_wheel_pulse = data.point.x
- 
     delta_l_pulse = new_l_wheel_pulse - l_wheel_pulse
     delta_r_pulse = new_r_wheel_pulse - r_wheel_pulse
     l_wheel_pulse = new_l_wheel_pulse # 새 엔코더 값을 기존 엔코더 값에 덮어씌움
     r_wheel_pulse = new_r_wheel_pulse
-         
     #rospy.loginfo("left encoder : %d", delta_l_pulse)
     #rospy.loginfo("right encoder : %d", delta_r_pulse)
     time_now = time()
     delta_time = time_now - time_prev
     time_prev = time_now
 
-    l_vel = (2 * pi * 0.085 * (delta_l_pulse / 1292)) / delta_time
-    r_vel = (2 * pi * 0.085 * (delta_r_pulse / 1292)) / delta_time
+    l_vel = (2 * pi * 0.044 * (delta_l_pulse / 1292)) / delta_time
+    r_vel = (2 * pi * 0.044 * (delta_r_pulse / 1292)) / delta_time
 
     linear_vel = (l_vel + r_vel) / 2.0
-    angular_vel = (r_vel - l_vel) / 0.38
+    angular_vel = (r_vel - l_vel) / 0.2985
 
     delta_s = linear_vel * delta_time # delta_time 동안의 이동거리
     delta_theta = angular_vel * delta_time # small angle[rad]
@@ -97,20 +92,21 @@ def encoder_callback(data) :
 
     # 처음 몇 번의 값을 제외해줘야 초기 오도메트리가 0으로 계산됨
     count += 1
-    if count < 5 : 
+    if count < 4 : 
         delta_x = 0
         delta_y = 0
         delta_theta = 0.0
     else : 
         count = 10
-  
+
+
     if abs(delta_l_pulse) > 3000 or abs(delta_r_pulse) > 3000 : # 노이즈필터 
         delta_x = 0
         delta_y = 0
         delta_theta = 0.0
         linear_vel = 0.0
-        angular_vel = 0.0
-
+        angular_vel = 0.0  
+  
     x_pos += delta_x
     y_pos += delta_y
     theta += delta_theta
@@ -125,7 +121,7 @@ def encoder_callback(data) :
     odom = Odometry()
             
     odom.header.stamp = rospy.Time.now()
-    odom.header.frame_id = "odometry"
+    odom.header.frame_id = "odom"
     odom.child_frame_id = "base_footprint"
 
     # robot's position in x,y, and z
@@ -138,18 +134,12 @@ def encoder_callback(data) :
     odom.pose.pose.orientation.z = quaternion[2]
     odom.pose.pose.orientation.w = quaternion[3]
 
-#    odom.pose.covariance[0] = 1e-3
-#    odom.pose.covariance[7] = 1e-3
-#    odom.pose.covariance[14] = 1e6
-#    odom.pose.covariance[21] = 1e6
-#    odom.pose.covariance[28] = 1e6
-#    odom.pose.covariance[35] = 1e3
-    odom.pose.covariance[0] = 0
-    odom.pose.covariance[7] = 0
-    odom.pose.covariance[14] = 0
-    odom.pose.covariance[21] = 0
-    odom.pose.covariance[28] = 0
-    odom.pose.covariance[35] = 0
+    odom.pose.covariance[0] = 1e-3
+    odom.pose.covariance[7] = 1e-3
+    odom.pose.covariance[14] = 1e6
+    odom.pose.covariance[21] = 1e6
+    odom.pose.covariance[28] = 1e6
+    odom.pose.covariance[35] = 1e3
 
     # linear speed from encoders
     odom.twist.twist.linear.x = linear_vel
@@ -159,22 +149,23 @@ def encoder_callback(data) :
     odom.twist.twist.angular.y = 0.0
     odom.twist.twist.angular.z = angular_vel
 
-#    odom.twist.covariance[0] = 1e-3
-#    odom.twist.covariance[7] = 1e-3
-#    odom.twist.covariance[14] = 1e6
-#    odom.twist.covariance[21] = 1e3
-#    odom.twist.covariance[28] = 1e6
-#    odom.twist.covariance[35] = 1e3
-    odom.twist.covariance[0] = 0
-    odom.twist.covariance[7] = 0
-    odom.twist.covariance[14] = 0
-    odom.twist.covariance[21] = 0
-    odom.twist.covariance[28] = 0
-    odom.twist.covariance[35] = 0
+    odom.twist.covariance[0] = 1e-3
+    odom.twist.covariance[7] = 1e-3
+    odom.twist.covariance[14] = 1e6
+    odom.twist.covariance[21] = 1e3
+    odom.twist.covariance[28] = 1e6
+    odom.twist.covariance[35] = 1e3
 
     odom_publisher.publish(odom)
     #------------------------------------------------------------
-
+    #---------------tf 퍼블리시------------------------------------
+    br = tf.TransformBroadcaster()
+    br.sendTransform((x_pos,y_pos,0),
+                     (quaternion[0],quaternion[1],quaternion[2],quaternion[3]),
+                     rospy.Time.now(),
+                     "base_footprint",
+                     "odom")
+    #------------------------------------------------------------
     #---------------joint state 퍼블리시---------------------------
     joint_state = JointState()
     joint_state.header.frame_id = "base_link"
@@ -193,15 +184,13 @@ def encoder_callback(data) :
 
 if __name__=="__main__":
     
-    rospy.init_node('odom_publisher')   
+    rospy.init_node('publisher2')   
     rospy.Subscriber("encoder_data", PointStamped, encoder_callback)
-    odom_publisher = rospy.Publisher('/odom_raw', Odometry, queue_size=50)
+    odom_publisher = rospy.Publisher('/odom', Odometry, queue_size=50)
     joint_state_publisher = rospy.Publisher('/joint_states', JointState, queue_size=50)
 
     global l_wheel_pulse
     global r_wheel_pulse
-    global l_wheel_buffer
-    global r_wheel_buffer
     global time_prev
     global x_pos
     global y_pos
@@ -209,8 +198,6 @@ if __name__=="__main__":
     global count
     l_wheel_pulse = 0
     r_wheel_pulse = 0
-    l_wheel_buffer = 0
-    r_wheel_buffer = 0
     time_prev = 0.0
     x_pos = 0.0
     y_pos = 0.0
@@ -220,7 +207,7 @@ if __name__=="__main__":
     init_odometry()
 
     rate = rospy.Rate(50)
-    rospy.loginfo("publishing odometry")
+    rospy.loginfo("publishing")
     rospy.spin()
     rate.sleep()
 
