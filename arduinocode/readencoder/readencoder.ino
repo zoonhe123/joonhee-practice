@@ -37,7 +37,7 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
   mvc_cmd += String(speed_cmd_right) + comma + String(speed_cmd_left);
   Serial3.println(mvc_cmd); // 속도명령을 내리고 엔코더값을 읽어옴.
 
-  publlish_encoder();// 엔코더 값을 읽어 퍼블리시하는 추가 함수
+
 }
 
 // subscriber
@@ -63,7 +63,7 @@ void loop()
 {
   
   nh.spinOnce();
-
+  publlish_encoder();// 엔코더 값을 읽어 퍼블리시하는 추가 함수
 //  delay(100);
 }
 
@@ -71,6 +71,7 @@ void publlish_encoder(){
 
   String rec_encoder = "";
   String str_l_wheel, str_r_wheel;
+  Serial3.println("mp");
   delay(5); ////데이터 수신 delay
   do {
       rec_encoder += (char)Serial3.read();
