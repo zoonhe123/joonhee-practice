@@ -7,6 +7,8 @@
 
 
 
+String prev_str_l_wheel = "0";
+String prev_str_r_wheel = "0";
 
 const double radius = 0.044;  //바퀴 반지름[m] 우리껀0.064
 const double width = 0.2985;  //두 바퀴 사이 거리[m]
@@ -85,8 +87,10 @@ void publlish_encoder(){
   for (int i = find_dot + 1; i < rec_encoder.length(); i++) {str_r_wheel += rec_encoder[i];}
   // 엔코더 값을 정수로 메시지에 추가
 
-  wheel.point.x = str_l_wheel.toInt()*1.0; // 왼쪽 엔코더 값
-  wheel.point.y = str_r_wheel.toInt()*1.0; // 오른쪽 엔코더 값
+  wheel.point.x = str_l_wheel.toInt()*1.0 - prev_str_l_wheel.toInt()*1.0; // 왼쪽 엔코더 값 차이
+  wheel.point.y = str_r_wheel.toInt()*1.0 - prev_str_r_wheel.toInt()*1.0; // 오른쪽 엔코더 값 차이
+  mystring.replace(prev_str_l_wheel,str_l_wheel);
+  mystring.replace(prev_str_r_wheel,str_r_wheel);
   wheel.point.z = 0.0;
   wheel.header.stamp = nh.now();
   enc_pub.publish(&wheel);
