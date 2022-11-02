@@ -2,6 +2,7 @@
 #-*- coding:utf-8 -*-
 
 import rospy
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import tf
 from math import pow
 from sensor_msgs.msg import Imu # 바퀴 조인트 상태 메시지
@@ -58,22 +59,34 @@ def imu_callback(data) :
          accel_filtered_z = data.linear_acceleration.z
          count += 1
     else : 
-         orientation_filtered_x = orientation_filtered_x * (1-0.1) + 0.1 * orientation_x_b
-         orientation_filtered_y = orientation_filtered_y * (1-0.1) + 0.1 * orientation_y_b
-         orientation_filtered_z = orientation_filtered_z * (1-0.1) + 0.1 * orientation_z_b
-         orientation_filtered_w = orientation_filtered_w * (1-0.1) + 0.1 * orientation_w_b
-         gyro_filtered_x = gyro_filtered_x * (1-0.1) + 0.1 * gyro_x_b
-         gyro_filtered_y = gyro_filtered_y * (1-0.1) + 0.1 * gyro_y_b
-         gyro_filtered_z = gyro_filtered_z * (1-0.1) + 0.1 * gyro_z_b
-         accel_filtered_x = accel_filtered_x * (1-0.1) + 0.1 * accel_x_b
-         accel_filtered_y = accel_filtered_y * (1-0.1) + 0.1 * accel_y_b
-         accel_filtered_z = accel_filtered_z * (1-0.1) + 0.1 * accel_z_b
+         orientation_filtered_x = orientation_filtered_x * (1-0.1) + 0.1 * data.orientation.x
+         orientation_filtered_y = orientation_filtered_y * (1-0.1) + 0.1 * data.orientation.y
+         orientation_filtered_z = orientation_filtered_z * (1-0.1) + 0.1 * data.orientation.z
+         orientation_filtered_w = orientation_filtered_w * (1-0.1) + 0.1 * data.orientation.w
+         gyro_filtered_x = gyro_filtered_x * (1-0.1) + 0.1 * data.angular_velocity.x
+         gyro_filtered_y = gyro_filtered_y * (1-0.1) + 0.1 * data.angular_velocity.y
+         gyro_filtered_z = gyro_filtered_z * (1-0.1) + 0.1 * data.angular_velocity.z
+         accel_filtered_x = accel_filtered_x * (1-0.1) + 0.1 * data.linear_acceleration.x
+         accel_filtered_y = accel_filtered_y * (1-0.1) + 0.1 * data.linear_acceleration.y
+         accel_filtered_z = accel_filtered_z * (1-0.1) + 0.1 * data.linear_acceleration.z
          count = 10
 
     imu.orientation.x = orientation_filtered_x
     imu.orientation.y = orientation_filtered_y
     imu.orientation.z = orientation_filtered_z
     imu.orientation.w = orientation_filtered_w    
+#-------------------------------------------------------
+    quat_1 = (imu.orientation.x,imu.orientation.y,imu.orientation.z,imu.orientation.w)
+    
+    euler_angle = euler_from_quaternion(quat_1)
+
+    quat = quaternion_from_euler(euler_angle[0], -euler_angle[1], -euler_angle[2])
+
+    imu.orientation.x = quat[0]
+    imu.orientation.y = quat[1]
+    imu.orientation.z = quat[2]
+    imu.orientation.w = quat[3]
+#-------------------------------------------------------
 
     imu.angular_velocity.x = gyro_filtered_x
     imu.angular_velocity.y = gyro_filtered_y

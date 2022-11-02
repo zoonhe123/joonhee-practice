@@ -7,17 +7,16 @@
 
 
 
-String prev_str_l_wheel = "0";
-String prev_str_r_wheel = "0";
 
-const double radius = 0.044;  //바퀴 반지름[m] 우리껀0.064
-const double width = 0.2985;  //두 바퀴 사이 거리[m]
+const double radius = 0.039;  //바퀴 반지름[m] 우리껀0.064
+const double width = 0.285;  //두 바퀴 사이 거리[m]
 double linear_speed_cmd = 0; //AGV 선형 속도[m/s]
 double angular_speed_cmd = 0; //AGV 각속도[rad/s]
 double speed_cmd_left = 0;  //왼쪽 바퀴 속도[rpm]
 double speed_cmd_right = 0; //오른쪽 바퀴 속도[rpm]
 
 void publlish_encoder();
+
 
 ros::NodeHandle  nh;
 
@@ -44,20 +43,23 @@ void AGVcontrol_cmd (const geometry_msgs::Twist& cmd_vel){
 
 // subscriber
 ros::Subscriber<geometry_msgs::Twist> cmd_vel("cmd_vel", AGVcontrol_cmd);
+
 // publisher
 geometry_msgs::PointStamped wheel;
 ros::Publisher enc_pub("encoder_data", &wheel);
 
 
+
 void setup()
 {
-  Serial3.begin(38400);
+  Serial3.begin(57600);
   Serial3.println("co1=1");
   Serial3.println("co2=1");
   nh.initNode();
-
   nh.subscribe(cmd_vel);
   nh.advertise(enc_pub);
+
+  
 
 }
 
@@ -66,18 +68,22 @@ void loop()
   
   nh.spinOnce();
   publlish_encoder();// 엔코더 값을 읽어 퍼블리시하는 추가 함수
-//  delay(100);
+
+  //delay(37);
 }
 
 void publlish_encoder(){
 
   String rec_encoder = "";
   String str_l_wheel, str_r_wheel;
-  Serial3.println("mp");
-  delay(5); ////데이터 수신 delay
+  Serial3.print("mp");
+  delay(10); ////데이터 수신 delay
   do {
       rec_encoder += (char)Serial3.read();
+      //str_data.data += (char)Serial3.read();
+      
     } while (Serial3.available());
+
   // 읽어온 엔코더값은 mvc = _____, _____ 의 형태이므로 숫자값으로 바꿔줘야함
   int find_equal = rec_encoder.indexOf('=', 0); //from 0
   int find_dot = rec_encoder.indexOf(',', 0);
@@ -87,12 +93,13 @@ void publlish_encoder(){
   for (int i = find_dot + 1; i < rec_encoder.length(); i++) {str_r_wheel += rec_encoder[i];}
   // 엔코더 값을 정수로 메시지에 추가
 
-  wheel.point.x = str_l_wheel.toInt()*1.0 - prev_str_l_wheel.toInt()*1.0; // 왼쪽 엔코더 값 차이
-  wheel.point.y = str_r_wheel.toInt()*1.0 - prev_str_r_wheel.toInt()*1.0; // 오른쪽 엔코더 값 차이
-  mystring.replace(prev_str_l_wheel,str_l_wheel);
-  mystring.replace(prev_str_r_wheel,str_r_wheel);
-  wheel.point.z = 0.0;
+  wheel.point.x = str_l_wheel.toInt()*1.0; // 왼쪽 엔코더 값
+  wheel.point.y = str_r_wheel.toInt()*1.0; // 오른쪽 엔코더 값
+  //wheel.point.z = 0.0;
+  
   wheel.header.stamp = nh.now();
+  
   enc_pub.publish(&wheel);
+  Serial3.print("\n");
   
 }

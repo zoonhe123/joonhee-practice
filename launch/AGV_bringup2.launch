@@ -2,36 +2,22 @@
 
     <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
       <param name="port" value="/dev/ttyUSB0"/>
-      <param name="baud" value="57600"/>
+      <param name="baud" value="250000"/>
     </node>
-
-    <node pkg="practice" type="AGV_teleop_key.py" name="AGV_teleop_key" output="screen" />
 
 
     <!-- IMU -->
     <include file="$(find practice)/launch/imu.launch" />
 
 
-    <node pkg="practice" type="publisher2.py" name="publisher2" output="screen">
+    <node pkg="practice" type="publisher.py" name="publisher" output="screen">
     </node>
-
-
-    <!-- Odom-IMU Extended Kalman Filter-->
-
-
-    <param name="robot_description" textfile="$(find robot_description)/urdf/AGV.urdf" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
 
     <!-- Run rplidar -->
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
 
     
-
-
-
-    
-
 
 </launch>
 

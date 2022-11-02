@@ -27,12 +27,12 @@ def init_odometry() :
     Odometry().pose.pose.orientation.z = 0.0
     Odometry().pose.pose.orientation.w = 0.0
 
-    Odometry().pose.covariance[0] = 1e-3
-    Odometry().pose.covariance[7] = 1e-3
-    Odometry().pose.covariance[14] = 1e6
-    Odometry().pose.covariance[21] = 1e6
-    Odometry().pose.covariance[28] = 1e6
-    Odometry().pose.covariance[35] = 1e3
+    Odometry().pose.covariance[0] = 0.0
+    Odometry().pose.covariance[7] = 0.0
+    Odometry().pose.covariance[14] = 0.0
+    Odometry().pose.covariance[21] = 0.0
+    Odometry().pose.covariance[28] = 0.0
+    Odometry().pose.covariance[35] = 0.0
 
     # linear speed from encoders
     Odometry().twist.twist.linear.x = 0.0
@@ -42,12 +42,12 @@ def init_odometry() :
     Odometry().twist.twist.angular.y = 0.0
     Odometry().twist.twist.angular.z = 0.0
 
-    Odometry().twist.covariance[0] = 1e-3
-    Odometry().twist.covariance[7] = 1e-3
-    Odometry().twist.covariance[14] = 1e6
-    Odometry().twist.covariance[21] = 1e3
-    Odometry().twist.covariance[28] = 1e6
-    Odometry().twist.covariance[35] = 1e3
+    Odometry().twist.covariance[0] = 0.0
+    Odometry().twist.covariance[7] = 0.0
+    Odometry().twist.covariance[14] = 0.0
+    Odometry().twist.covariance[21] = 0.0
+    Odometry().twist.covariance[28] = 0.0
+    Odometry().twist.covariance[35] = 0.0
 
     odom_publisher.publish(Odometry())
 
@@ -58,6 +58,8 @@ def encoder_callback(data) :
     global l_wheel_pulse
     global r_wheel_pulse
     global time_prev
+    global linear_vel_prev
+    global angular_vel_prev
     global x_pos
     global y_pos
     global theta
@@ -100,16 +102,19 @@ def encoder_callback(data) :
         count = 10
 
 
-    if abs(delta_l_pulse) > 3000 or abs(delta_r_pulse) > 3000 : # 노이즈필터 
+    if abs(delta_l_pulse) > 1000 or abs(delta_r_pulse) > 1000 : # 노이즈필터 
         delta_x = 0
         delta_y = 0
         delta_theta = 0.0
-        linear_vel = 0.0
-        angular_vel = 0.0  
+        linear_vel = linear_vel_prev
+        angular_vel = angular_vel_prev
   
+
     x_pos += delta_x
     y_pos += delta_y
     theta += delta_theta
+    linear_vel_prev = linear_vel
+    angular_vel_prev = angular_vel
 
     if theta >= pi * 2 : theta -= pi * 2
     if theta <= -pi * 2 : theta += pi * 2
@@ -192,6 +197,8 @@ if __name__=="__main__":
     global l_wheel_pulse
     global r_wheel_pulse
     global time_prev
+    global linear_vel_prev
+    global angular_vel_prev
     global x_pos
     global y_pos
     global theta
@@ -199,6 +206,8 @@ if __name__=="__main__":
     l_wheel_pulse = 0
     r_wheel_pulse = 0
     time_prev = 0.0
+    linear_vel_prev = 0.0
+    angular_vel_prev = 0.0
     x_pos = 0.0
     y_pos = 0.0
     theta = 0.0

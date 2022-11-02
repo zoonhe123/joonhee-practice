@@ -1,0 +1,13 @@
+<launch>
+    <!-- Map server -->
+    <arg name="map_file" default="$(find practice)/config/map/map.yaml"/>
+    <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
+
+
+    <include file="$(find practice)/launch/amcl.launch" />
+    
+    <include file="$(find practice)/launch/move_base.launch" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_description)/rviz/turtlebot3_navigation.rviz" />
+
+</launch>
