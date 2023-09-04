@@ -78,11 +78,11 @@ def encoder_callback(data) :
     delta_time = time_now - time_prev
     time_prev = time_now
 
-    l_vel = (pi * 0.078 * (delta_l_pulse / 1292)) / delta_time
-    r_vel = (pi * 0.078 * (delta_r_pulse / 1292)) / delta_time
+    l_vel = (pi * 0.095 * (delta_l_pulse / 1292)) / delta_time
+    r_vel = (pi * 0.095 * (delta_r_pulse / 1292)) / delta_time
 
     linear_vel = (l_vel + r_vel) / 2.0
-    angular_vel = (r_vel - l_vel) / 0.285
+    angular_vel = (r_vel - l_vel) / 0.2899
 
     delta_s = linear_vel * delta_time # delta_time 동안의 이동거리
     delta_theta = angular_vel * delta_time # small angle[rad]

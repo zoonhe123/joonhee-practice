@@ -44,11 +44,6 @@ catkin_install_python(PROGRAMS
 )
 
 catkin_install_python(PROGRAMS
-  nodes/imu_filter2.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-catkin_install_python(PROGRAMS
   nodes/publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

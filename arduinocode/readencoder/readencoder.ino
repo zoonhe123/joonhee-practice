@@ -52,7 +52,7 @@ ros::Publisher enc_pub("encoder_data", &wheel);
 
 void setup()
 {
-  Serial3.begin(57600);
+  Serial3.begin(115200);
   Serial3.println("co1=1");
   Serial3.println("co2=1");
   nh.initNode();
