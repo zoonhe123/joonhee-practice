@@ -8,8 +8,8 @@
 
 
 
-const double radius = 0.039;  //바퀴 반지름[m] 우리껀0.064
-const double width = 0.285;  //두 바퀴 사이 거리[m]
+const double radius = 0.0475;  //바퀴 반지름[m] 우리껀0.064
+const double width = 0.2899;  //두 바퀴 사이 거리[m]
 double linear_speed_cmd = 0; //AGV 선형 속도[m/s]
 double angular_speed_cmd = 0; //AGV 각속도[rad/s]
 double speed_cmd_left = 0;  //왼쪽 바퀴 속도[rpm]

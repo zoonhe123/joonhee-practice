@@ -10,14 +10,9 @@
         <rosparam file="$(find practice)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
         <rosparam file="$(find practice)/param/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find practice)/param/global_costmap_params.yaml" command="load" />
-
-
-        <rosparam file="$(find practice)/param/base_local_planner_params.yaml" command="load" />
-
-
+        
         <rosparam file="$(find practice)/param/move_base_params.yaml" command="load" />
-        <rosparam file="$(find practice)/param/dwa_local_planner_params2.yaml" command="load" />
-  
+        <rosparam file="$(find practice)/param/dwa_local_planner_params.yaml" command="load" />
 
     </node>
 </launch>

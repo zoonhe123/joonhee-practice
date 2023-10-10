@@ -1,12 +1,19 @@
 global_costmap:
-  global_frame: map
-  robot_base_frame: base_footprint
+  global_frame: map # 비용 맵이 실행되어야 하는 좌표 프레임을 정의
+  robot_base_frame: base_footprint # 비용 맵이 로봇 베이스에 대해 참조해야 하는 좌표 프레임을 정의
 
-  update_frequency: 0.20
-  publish_frequency: 1.0
+  update_frequency: 5.0
+  # 비용 맵이 업데이트 루프를 실행하는 빈도(Hz)
+  publish_frequency: 5.0
   transform_tolerance: 0.5
 
 
   static_map: true
+  # map_server 에서 제공하는 맵을 기반으로 비용 맵이 자체적으로 초기화되어야 하는지 여부를 결정
+  ## 기존 맵 또는 맵 서버를 사용하지 않는 경우 false로 설정(그냥 true로 놓으면 된다)
+  #plugins:
+  #   - {name: static_layer,            type: "costmap_2d::StaticLayer"}
+  #   - {name: obstacle_layer,          type: "costmap_2d::VoxelLayer"}
+  #   - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}
 
 
