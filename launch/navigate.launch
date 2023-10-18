@@ -1,6 +1,6 @@
 <launch>
     <!-- Map server -->
-    <arg name="map_file" default="$(find practice)/config/map/map1010.yaml"/>
+    <arg name="map_file" default="$(find practice)/config/map/map1018.yaml"/>
     <node pkg="map_server" name="map_server"  type="map_server" args="$(arg map_file)" />
 
 
@@ -24,6 +24,7 @@
     
     <include file="$(find practice)/launch/include/move_base.launch" />
 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_description)/rviz/navigation.rviz" />
-
+    <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_description)/rviz/navigation.rviz" />-->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find nav_cctv)/rviz/new.rviz" />
+    
 </launch>

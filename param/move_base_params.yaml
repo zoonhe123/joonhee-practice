@@ -1,6 +1,6 @@
 shutdown_costmaps: false
 # move base가 비활성 상태일 때 노드의 비용 맵을 종료할 지 여부 결정
-controller_frequency: 20.0
+controller_frequency: 15.0
 # 제어 루프를 실행하고 속도 명령을 베이스로 보내는 속도(Hz)
 planner_patience: 5.0
 # 공간 정리 작업이 수행되기 전에 플래너가 유효한 계획을 찾기 위해 대기하는 시간(초)
