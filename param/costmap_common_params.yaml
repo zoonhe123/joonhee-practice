@@ -7,12 +7,12 @@ raytrace_range: 3.5
 
 #footprint: [[-0.145, 0.145], [-0.145, -0.145], [0.145, -0.145], [0.145, 0.145]]
 # 모바일 로봇의 윤곽선. 
-robot_radius: 0.19
+robot_radius: 0.21
 # 로봇이 원형인 경우 사용
 
-inflation_radius: 0.5
+inflation_radius: 0.1
 # 장애물 cost value를 팽창시킬 반지름 크기(m)
-cost_scaling_factor: 10.0
+cost_scaling_factor: 5.0
 # 팽창시키는 동안 적용할 scaling factor
 ## 거리에 따른 cell cost 그래프가 지수적으로 감소하는데, 이 지수함수의 감소 비율
 ### 두 값들이 크면 로봇이 장애물로부터 멀리 떨어져서 진행하려고 하기 때문에 안전하지만, 장애물을 빙 돌아가려고 함

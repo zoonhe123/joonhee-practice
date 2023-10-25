@@ -1,26 +1,26 @@
 DWAPlannerROS:
 
 # Robot Configuration Parameters
-  max_vel_x: 0.5
-  min_vel_x: -0.5
+  max_vel_x: 0.4
+  min_vel_x: -0.4
 
   max_vel_y: 0.0
   min_vel_y: 0.0
 
 # The velocity when robot is moving in a straight line
-  max_vel_trans:  0.5
-  min_vel_trans:  0
+  max_vel_trans:  0.4
+  min_vel_trans:  -0.4
 
-  max_vel_theta: 3.00
-  min_vel_theta: 0.30
+  max_vel_theta: 3.0
+  min_vel_theta: 0.2
 
-  acc_lim_x: 1.0
+  acc_lim_x: 15.0
   acc_lim_y: 0.0
-  acc_lim_theta: 1.0 
+  acc_lim_theta: 15.0
 
 # Goal Tolerance Parametes
-  xy_goal_tolerance: 0.15
-  yaw_goal_tolerance: 0.15
+  xy_goal_tolerance: 0.20
+  yaw_goal_tolerance: 0.20
   latch_xy_goal_tolerance: false
 
 # Forward Simulation Parameters
@@ -30,18 +30,18 @@ DWAPlannerROS:
   vy_samples: 0
   vth_samples: 40
   # x,y,th 속도 공간에서의 샘플 수
-  controller_frequency: 15.0
+  controller_frequency: 5
 
 # Trajectory Scoring Parameters
-  path_distance_bias: 32.0
+  path_distance_bias: 40.0
   # 컨트롤러가 주어진 경로(global plan)에 가깝게 유지하도록 하는 가중치
-  goal_distance_bias: 20.0
+  goal_distance_bias: 40.0
   # 컨트롤러가 local goal에 도달하도록 하는 가중치 
-  occdist_scale: 0.10
+  occdist_scale: 0.2
   # 컨트롤러가 장애물을 피하도록 하는 가중치
   ## 즉, 경로에 대해 점수를 매길 때, 어떤 부분에 대해 더 점수를 줄 것이냐??
   forward_point_distance: 0.325
-  stop_time_buffer: 0.2
+  stop_time_buffer: 1.0
   scaling_speed: 0.25
   max_scaling_factor: 0.2
 
@@ -51,4 +51,3 @@ DWAPlannerROS:
 # Debugging
   publish_traj_pc : true
   publish_cost_grid_pc: true
-
