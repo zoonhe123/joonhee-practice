@@ -14,13 +14,13 @@ DWAPlannerROS:
   max_vel_theta: 3.0
   min_vel_theta: 0.2
 
-  acc_lim_x: 15.0
+  acc_lim_x: 10.0
   acc_lim_y: 0.0
-  acc_lim_theta: 15.0
+  acc_lim_theta: 10.0
 
 # Goal Tolerance Parametes
-  xy_goal_tolerance: 0.20
-  yaw_goal_tolerance: 0.20
+  xy_goal_tolerance: 0.40
+  yaw_goal_tolerance: 0.60
   latch_xy_goal_tolerance: false
 
 # Forward Simulation Parameters
@@ -35,7 +35,7 @@ DWAPlannerROS:
 # Trajectory Scoring Parameters
   path_distance_bias: 40.0
   # 컨트롤러가 주어진 경로(global plan)에 가깝게 유지하도록 하는 가중치
-  goal_distance_bias: 40.0
+  goal_distance_bias: 30.0
   # 컨트롤러가 local goal에 도달하도록 하는 가중치 
   occdist_scale: 0.2
   # 컨트롤러가 장애물을 피하도록 하는 가중치
@@ -51,3 +51,5 @@ DWAPlannerROS:
 # Debugging
   publish_traj_pc : true
   publish_cost_grid_pc: true
+
+  holomonic_robot: true
