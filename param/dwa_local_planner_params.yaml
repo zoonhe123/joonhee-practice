@@ -16,7 +16,7 @@ DWAPlannerROS:
 
   acc_lim_x: 10.0
   acc_lim_y: 0.0
-  acc_lim_theta: 10.0
+  acc_lim_theta: 15.0
 
 # Goal Tolerance Parametes
   xy_goal_tolerance: 0.40
@@ -33,7 +33,7 @@ DWAPlannerROS:
   controller_frequency: 5
 
 # Trajectory Scoring Parameters
-  path_distance_bias: 40.0
+  path_distance_bias: 50.0
   # 컨트롤러가 주어진 경로(global plan)에 가깝게 유지하도록 하는 가중치
   goal_distance_bias: 30.0
   # 컨트롤러가 local goal에 도달하도록 하는 가중치 
